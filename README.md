@@ -1,35 +1,12 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C6 | ESP32-H2 | ESP32-P4 | ESP32-S2 | ESP32-S3 |
-| ----------------- | ----- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+# Nodo Wifi-DMX512
 
-# _Sample project_
+El proyecto se basa en el desarrollo de un nodo ArtNet para el control de iluminación DMX512 para la catedra de Sistemas Digitales 3 y Sistemas Digitales 4 de la Facultad de Ciencias Exactas, Ingeniería y Agrimensura de la UNR.
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+->DMX512 (ANSI E1.11) es un protocolo de comunicación serie asíncrono basado en RS-485. Este funciona a 250 kbps y puede enviar información hasta 512 canales en un solo universo DMX512 con 1 byte de datos por canal.
 
-This is the simplest buildable example. The example is used by command `idf.py create-project`
-that copies the project to user specified path and set it's name. For more information follow the [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project)
+->ArtNet es un protocolo de control de iluminación estándar de la industria que permite configurar y administrar múltiples universos DMX utilizando convenciones de red Ethernet LAN y WLAN. Este distribuye datos DMX y RDM a través de una red Ethernet utilizando paquetes basados ​​en UDP. En dichas redes, los nodos ArtNet (convertidores ArtNet a DMX) se utilizan para enviar valores DMX a los dispositivos de iluminación.
 
 
 
-## How to use example
-We encourage the users to use the example as a template for the new projects.
-A recommended way is to follow the instructions on a [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project).
 
-## Example folder contents
 
-The project **sample_project** contains one source file in C language [main.c](main/main.c). The file is located in folder [main](main).
-
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt`
-files that provide set of directives and instructions describing the project's source files and targets
-(executable, library, or both). 
-
-Below is short explanation of remaining files in the project folder.
-
-```
-├── CMakeLists.txt
-├── main
-│   ├── CMakeLists.txt
-│   └── main.c
-└── README.md                  This is the file you are currently reading
-```
-Additionally, the sample project contains Makefile and component.mk files, used for the legacy Make based build system. 
-They are not used or needed when building with CMake and idf.py.
