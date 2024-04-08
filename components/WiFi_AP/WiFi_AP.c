@@ -2,12 +2,13 @@
 #include "WiFi_AP.h"
 
 static const char * TAG_Wifi = "Wifi";
+esp_netif_t *netif;
 
 void wifi_init(void){
 
     ESP_ERROR_CHECK(esp_netif_init());// Inicializo el Stack TCP/IP
     ESP_ERROR_CHECK(esp_event_loop_create_default());// Creacion de eventos por defecto
-    esp_netif_create_default_wifi_ap();//Set modo Wifi-AP
+    netif=esp_netif_create_default_wifi_ap();//Set modo Wifi-AP
 
     // Evento para la conexion wifi
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, NULL));
@@ -35,7 +36,6 @@ void wifi_init(void){
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
-
     ESP_LOGI(TAG_Wifi, "Inicializacion WiFi-SoftAP Finalizada.");
     ESP_LOGI(TAG_Wifi, "SSID:%s password:%s channel:%d",ESP_WIFI_SSID, ESP_WIFI_PASS, ESP_WIFI_CHANNEL);
 
@@ -53,4 +53,9 @@ void wifi_event_handler(void* arg, esp_event_base_t event_base,
         ESP_LOGI(TAG_Wifi, "station "MACSTR" leave, AID=%d",MAC2STR(event->mac), event->aid);
        
     }
+}
+esp_ip4_addr_t get_ip(void){
+    esp_netif_ip_info_t ip_info;
+    esp_netif_get_ip_info(netif,&ip_info);
+    return ip_info.ip;
 }

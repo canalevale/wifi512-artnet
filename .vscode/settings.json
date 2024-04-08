@@ -14,5 +14,17 @@
     ],
     "idf.portWin": "COM4",
     "idf.pythonBinPathWin": "e:\\Documents\\.espressif\\python_env\\idf5.2_py3.11_env\\Scripts\\python.exe",
-    "idf.toolsPathWin": "e:\\Documents\\.espressif"
+    "idf.toolsPathWin": "e:\\Documents\\.espressif",
+    "idf.flashType": "UART",
+    "files.associations": {
+        "artnet.h": "c",
+        "nvs_flash.h": "c",
+        "stdio.h": "c",
+        "esp_log.h": "c",
+        "ip_addr.h": "c",
+        "esp_netif.h": "c",
+        "esp_netif_ip_addr.h": "c",
+        "esp_mac.h": "c",
+        "udp.h": "c"
+    }
 }

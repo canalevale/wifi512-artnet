@@ -1,7 +1,10 @@
 /* >> SD4 - Proyecto Nodo Wifi512-ArtNet << */
 
 //Includes
-
+#include "esp_log.h"
+#include "UDP.h"
+#include "esp_wifi.h"
+#include "WiFi_AP.h"
 //Defines
 
 // Puerto UDP
@@ -16,8 +19,6 @@
 // Packet
 #define ART_NET_ID "Art-Net"
 #define ART_DMX_START 18
-
-uint8_t artnet_packet[MAX_BUFFER_ARTNET];
 
 // Estructura para el paquete ArtPoll
 typedef struct {
@@ -35,9 +36,37 @@ typedef struct {
     uint16_t opcode;    // Código de operación (OpPollReply = 0x2100)
     uint8_t ipAddress[4]; // Dirección IP del dispositivo
     uint16_t port;      // Puerto de comunicación (generalmente 6454)
-    uint8_t versionInfoH; // Información de versión alta
-    uint8_t versionInfoL; // Información de versión baja
-    // Otros campos de información, como número de universos, etc.
+    uint8_t verH; // Información de versión alta
+    uint8_t ver; // Información de versión baja
+    uint8_t  subH;
+    uint8_t  sub;
+    uint8_t  oemH;
+    uint8_t  oem;
+    uint8_t  ubea;
+    uint8_t  status;
+    uint8_t  etsaman[2];
+    uint8_t  shortname[18];
+    uint8_t  longname[64];
+    uint8_t  nodereport[64];
+    uint8_t  numbportsH;
+    uint8_t  numbports;
+    uint8_t  porttypes[4];//max of 4 ports per node
+    uint8_t  goodinput[4];
+    uint8_t  goodoutput[4];
+    uint8_t  swin[4];
+    uint8_t  swout[4];
+    uint8_t  swvideo;
+    uint8_t  swmacro;
+    uint8_t  swremote;
+    uint8_t  sp1;
+    uint8_t  sp2;
+    uint8_t  sp3;
+    uint8_t  style;
+    uint8_t  mac[6];
+    uint8_t  bindip[4];
+    uint8_t  bindindex;
+    uint8_t  status2;
+    uint8_t  filler[26];
 } ArtNetPollReplyPacket;
 
 // Estructura para el paquete Art-DMX
@@ -55,4 +84,7 @@ typedef struct {
     uint8_t data[512];  // Datos DMX
 
 } ArtNetDMX;
+
+
 //Funciones
+void artnet_task(void *pvParameters);

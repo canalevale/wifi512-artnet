@@ -15,3 +15,4 @@
 //Funciones
 void wifi_init(void);
 void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
+esp_ip4_addr_t get_ip(void);

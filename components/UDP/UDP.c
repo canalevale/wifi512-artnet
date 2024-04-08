@@ -2,15 +2,17 @@
 #include "UDP.h"
 
 static const char *TAG_UDP = "UDP";
-
+extern QueueHandle_t Packet;
+extern QueueHandle_t PacketArtReply;
 void udp_task(void *pvParameters)
 {
+    
+    //
     uint8_t rx_buffer[530];
-    char addr_str[128];
+    uint8_t art_reply[530];
     int addr_family = (int)pvParameters;
     int ip_protocol = 0;
     struct sockaddr_in6 dest_addr;
-    uint16_t opcode;
     
     while (1) {
         //Creacion de socket
@@ -52,16 +54,22 @@ void udp_task(void *pvParameters)
             }
             // Data received
             else {
-                // Get the sender's ip address as string
-                inet_ntoa_r(((struct sockaddr_in *)&source_addr)->sin_addr, addr_str, sizeof(addr_str) - 1);
-                
-                rx_buffer[len] = 0; // Null-terminate whatever we received and treat like a string...
-                ESP_LOGI(TAG_UDP, "Se recivieron %d bytes de %s:", len, addr_str);
-                opcode = rx_buffer[8] | rx_buffer[9] << 8;
-                if(opcode==0x5000){
-                    ESP_LOGI(TAG_UDP, "DMX Canal 1:%d", rx_buffer[18]);
+                //Add to Queue
+                ESP_LOGI(TAG_UDP, "Parquete a Queue");
+                if (!xQueueSend(Packet, rx_buffer, pdMS_TO_TICKS(100))){
+                    ESP_LOGE(TAG_UDP, "Error de envio Queue");
+                }   
+            }
+            if(!xQueueReceive(PacketArtReply, art_reply, pdMS_TO_TICKS(100))){
+            ESP_LOGE(TAG_UDP, "Error: No se recibio ArtPollReply ");
+            }else{
+                int err = sendto(sock, art_reply, sizeof(art_reply), 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
+                if (err < 0) {
+                    ESP_LOGE(TAG_UDP, "Error occurred during sending: errno %d", errno);
+                    break;
                 }
             }
+
         }
 
         if (sock != -1) {
