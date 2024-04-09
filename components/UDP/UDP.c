@@ -61,9 +61,10 @@ void udp_task(void *pvParameters)
                 }   
             }
             if(!xQueueReceive(PacketArtReply, art_reply, pdMS_TO_TICKS(100))){
-            ESP_LOGE(TAG_UDP, "Error: No se recibio ArtPollReply ");
+                //ESP_LOGE(TAG_UDP, "Error: No se recibio ArtPollReply ");
             }else{
                 int err = sendto(sock, art_reply, sizeof(art_reply), 0, (struct sockaddr *)&source_addr, sizeof(source_addr));
+                ESP_LOGW(TAG_UDP,"Se envio un ArtPollReply");
                 if (err < 0) {
                     ESP_LOGE(TAG_UDP, "Error occurred during sending: errno %d", errno);
                     break;

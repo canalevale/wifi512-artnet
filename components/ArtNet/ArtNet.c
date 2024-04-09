@@ -15,7 +15,7 @@ void artnet_task(void *pvParameters){
     while (1)
     {
         if(!xQueueReceive(Packet, art_buffer, pdMS_TO_TICKS(100))){
-            ESP_LOGE(TAG_ART, "Error de recepcion Queue");
+            //ESP_LOGE(TAG_ART, "Error de recepcion Queue");
         }else{
             ESP_LOGE(TAG_ART, "Recepcion Queue");
         
@@ -26,7 +26,7 @@ void artnet_task(void *pvParameters){
                 ESP_LOGI(TAG_ART, "DMX Canal 1:%d", art_buffer[18]);
                 break;
             case ART_POLL:
-                 ESP_LOGI(TAG_ART, "Paquete Art_Poll");
+                 ESP_LOGW(TAG_ART, "Paquete Art_Poll");
                  ArtNetPollReplyPacket reply;
                 
                 // ID Art-net

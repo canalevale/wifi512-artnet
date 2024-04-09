@@ -25,6 +25,8 @@
         "esp_netif.h": "c",
         "esp_netif_ip_addr.h": "c",
         "esp_mac.h": "c",
-        "udp.h": "c"
+        "udp.h": "c",
+        "*.tcc": "c",
+        "format": "c"
     }
 }
