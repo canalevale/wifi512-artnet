@@ -1,10 +1,11 @@
 /* >> SD4 - Proyecto Nodo Wifi512-ArtNet << */
-
+#ifndef ___ARTNET_H__
+#define ___ARTNET_H__
 //Includes
 #include "esp_log.h"
 #include "UDP.h"
 #include "esp_wifi.h"
-#include "WiFi_AP.h"
+#include "WiFi.h"
 //Defines
 
 // Puerto UDP
@@ -88,3 +89,5 @@ typedef struct {
 
 //Funciones
 void artnet_task(void *pvParameters);
+
+#endif //___ARTNET_H__

@@ -1,3 +1,7 @@
+
+#ifndef ___LED_BOARD_H__
+#define ___LED_BOARD_H__
+
 #include "driver/gpio.h"
 #include "esp_err.h"
 #include "esp_log.h"
@@ -5,3 +9,5 @@
 
 esp_err_t init_led(void);
 esp_err_t toggle_led(void);
+
+#endif //___LED_BOARD_H__

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "ArtNet.h"
 #include "nvs_flash.h"
-#include "WiFi_AP.h"
+#include "WiFi.h"
 #include "led_board.h"
 #include "UDP.h"
 #include "freertos/FreeRTOS.h"
@@ -18,25 +18,24 @@ esp_err_t create_task(void);
 ///////Main///////
 void app_main(void)
 {
-  //inicializo NVS
+  //Inicializo Flash
   esp_err_t ret = nvs_flash_init();
   if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
      ESP_ERROR_CHECK(nvs_flash_erase());
     ret = nvs_flash_init();
   }
   ESP_ERROR_CHECK(ret);
-  //Creo la Queue
 
+  //Creo la Queue
   Packet = xQueueCreate(10, sizeof(uint8_t [MAX_BUFFER_ARTNET]));
   PacketArtReply = xQueueCreate(2, sizeof(uint8_t [MAX_BUFFER_ARTNET]));
 
-  //inicializo Leds
+  //Inicializo Leds
   init_led();
-  //inicializo Wifi
-  wifi_init();
+  //Inicializo Wifi
+  wifi_init(MODE_STA);
   //Creo una tarea UDP Art-Net
   create_task();
-
 
   while (1)
   {

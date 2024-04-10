@@ -27,6 +27,8 @@
         "esp_mac.h": "c",
         "udp.h": "c",
         "*.tcc": "c",
-        "format": "c"
+        "format": "c",
+        "err.h": "c",
+        "esp_err.h": "c"
     }
 }
