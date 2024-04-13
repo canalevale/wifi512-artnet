@@ -51,11 +51,11 @@ void artnet_task(void *pvParameters){
 
                  uint8_t shortname [18];
                  uint8_t longname [64];
-                 sprintf((char *)shortname, "Art-net ESP32");
-                 sprintf((char *)longname, "Art-Net -> ESP32 bridge");
+                 sprintf((char *)shortname, "Nodo Wifi");
+                 sprintf((char *)longname, "Nodo Wifi-Artnet [Bridge with ESP32]");
                  memcpy(reply.shortname, shortname, sizeof(shortname));
                  memcpy(reply.longname, longname, sizeof(longname));
-
+                 memcpy(reply.nodereport, "#0001 [0000] Nodo Wifi-ArtNet.[Bridge with ESP32] -> Estado OK.", sizeof(reply.nodereport));
                  reply.etsaman[0] = 0;
                  reply.etsaman[1] = 0;
                  reply.verH       = 1;
