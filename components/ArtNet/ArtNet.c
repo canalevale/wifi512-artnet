@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include "ArtNet.h"
+#include "DMX.h"
 
 static const char *TAG_ART = "Art-Net";
 
-uint16_t opcode=0;
 extern QueueHandle_t Packet;
 extern QueueHandle_t PacketArtReply;
+extern QueueHandle_t PacketUART;
+uint8_t data_send[DMX_SIZE+1];
 
 
 void artnet_task(void *pvParameters){
@@ -14,17 +16,29 @@ void artnet_task(void *pvParameters){
 
     while (1)
     {
-        if(!xQueueReceive(Packet, art_buffer, pdMS_TO_TICKS(100))){
+        if(!xQueueReceive(Packet, art_buffer, pdMS_TO_TICKS(15))){
             //ESP_LOGE(TAG_ART, "Error de recepcion Queue");
         }else{
             ESP_LOGE(TAG_ART, "Recepcion Queue");
-        
-            opcode = art_buffer[8] | art_buffer[9] << 8;
+    
 
-            switch (opcode){
+            switch ((art_buffer[8] | art_buffer[9] << 8)){
             case ART_DMX:
+                
                 ESP_LOGI(TAG_ART, "DMX Canal 1:%d", art_buffer[18]);
+                ESP_LOGW(TAG_ART,"Secuencia_ART:%d",art_buffer[12]);
+                data_send[0]=DMX_START_CODE; //Start Code
+
+                for (int i = 0; i < DMX_SIZE; i++) {
+                    data_send[i + 1] = art_buffer[18+i]; // Empezando desde el índice 1 ya que el índice 0 es el código de inicio
+                }
+
+                if (!xQueueSend(PacketUART, data_send, pdMS_TO_TICKS(15))){
+                    ESP_LOGE(TAG_ART, "Error de envio Queue");
+                }
+                
                 break;
+           
             case ART_POLL:
                  ESP_LOGW(TAG_ART, "Paquete Art_Poll");
                  ArtNetPollReplyPacket reply;
@@ -93,7 +107,7 @@ void artnet_task(void *pvParameters){
 
                  break;
             case ART_POOLREPLY:
-                 ESP_LOGI(TAG_ART, "Paquete Art_Poll");
+                 ESP_LOGI(TAG_ART, "Paquete Art_PollReply");
                  break;
             }
         }

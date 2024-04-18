@@ -29,6 +29,12 @@
         "*.tcc": "c",
         "format": "c",
         "err.h": "c",
-        "esp_err.h": "c"
+        "esp_err.h": "c",
+        "cstdint": "c",
+        "uart.h": "c",
+        "dmx.h": "c",
+        "timers.h": "c",
+        "freertos.h": "c",
+        "sockets.h": "c"
     }
 }

@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include "UDP.h"
+#include "DMX.h"
+#include "ArtNet.h"
 
 static const char *TAG_UDP = "UDP";
 extern QueueHandle_t Packet;
 extern QueueHandle_t PacketArtReply;
+
 void udp_task(void *pvParameters)
 {
     
@@ -28,13 +31,13 @@ void udp_task(void *pvParameters)
         }
    
         ESP_LOGI(TAG_UDP, "Socket Creado");
-
+        /*
         // Set timeout
         struct timeval timeout;
         timeout.tv_sec = 10;
         timeout.tv_usec = 0;
         setsockopt (sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof timeout);
-
+        */
         int err = bind(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
         if (err < 0) {
             ESP_LOGE(TAG_UDP, "Socket no se puede vincular: errno %d", errno);
@@ -45,7 +48,7 @@ void udp_task(void *pvParameters)
         socklen_t socklen = sizeof(source_addr);
 
         while (1) {
-            ESP_LOGI(TAG_UDP, "Esperando datos");
+            //ESP_LOGI(TAG_UDP, "Esperando datos");
             int len = recvfrom(sock, rx_buffer, sizeof(rx_buffer), 0, (struct sockaddr *)&source_addr, &socklen);
             // Error occurred during receiving
             if (len < 0) {
@@ -56,9 +59,8 @@ void udp_task(void *pvParameters)
             else {
                 //Add to Queue
                 ESP_LOGI(TAG_UDP, "Parquete a Queue");
-                if (!xQueueSend(Packet, rx_buffer, pdMS_TO_TICKS(100))){
-                    ESP_LOGE(TAG_UDP, "Error de envio Queue");
-                }   
+                ESP_LOGW(TAG_UDP,"Secuencia_UDP:%d",rx_buffer[12]);
+                if (!xQueueSend(Packet, rx_buffer, pdMS_TO_TICKS(15))){ESP_LOGE(TAG_UDP, "Error de envio Queue");}
             }
             if(!xQueueReceive(PacketArtReply, art_reply, pdMS_TO_TICKS(100))){
                 //ESP_LOGE(TAG_UDP, "Error: No se recibio ArtPollReply ");

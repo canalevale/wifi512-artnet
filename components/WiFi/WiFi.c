@@ -21,7 +21,7 @@ void wifi_init(wifi_mode mode){
 void wifi_init_ap(void){
 
     ESP_ERROR_CHECK(esp_netif_init());// Inicializo el Stack TCP/IP
-    ESP_ERROR_CHECK(esp_event_loop_create_default());// Creacion de eventos por defecto
+    ESP_ERROR_CHECK(esp_event_loop_create_default());// Creacion de evento por defecto
     netif=esp_netif_create_default_wifi_ap();//Set modo Wifi-AP
 
     // Evento para la conexion wifi
