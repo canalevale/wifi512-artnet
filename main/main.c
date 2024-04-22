@@ -51,9 +51,9 @@ void app_main(void)
 
 esp_err_t create_task(void){
 
-  xTaskCreate(udp_task, "Udp_socket", 4096, (void*)AF_INET, 1, NULL); //Tarea UDP
-  xTaskCreate(artnet_task, "Art_net", 4096, NULL , 2, NULL); //Tarea Art-Net
-  xTaskCreate(uart_task, "UART", 4096, NULL , 1, NULL); //Tarea UART
+  xTaskCreatePinnedToCore(udp_task, "Udp_socket", 4096, (void*)AF_INET, 2, NULL,tskNO_AFFINITY); //Tarea UDP
+  xTaskCreatePinnedToCore(artnet_task, "Art_net", 4096, NULL , 2, NULL,tskNO_AFFINITY); //Tarea Art-Net
+  xTaskCreatePinnedToCore(uart_task, "UART", 4096, NULL , 1, NULL,tskNO_AFFINITY); //Tarea UART
 
 
   return ESP_OK;

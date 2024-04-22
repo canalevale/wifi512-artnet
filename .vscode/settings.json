@@ -35,6 +35,24 @@
         "dmx.h": "c",
         "timers.h": "c",
         "freertos.h": "c",
-        "sockets.h": "c"
+        "sockets.h": "c",
+        "atomic": "c",
+        "bitset": "c",
+        "chrono": "c",
+        "deque": "c",
+        "list": "c",
+        "vector": "c",
+        "memory_resource": "c",
+        "optional": "c",
+        "string_view": "c",
+        "random": "c",
+        "fstream": "c",
+        "functional": "c",
+        "istream": "c",
+        "system_error": "c",
+        "regex": "c",
+        "type_traits": "c",
+        "tuple": "c",
+        "variant": "c"
     }
 }

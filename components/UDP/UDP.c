@@ -58,11 +58,11 @@ void udp_task(void *pvParameters)
             // Data received
             else {
                 //Add to Queue
-                ESP_LOGI(TAG_UDP, "Parquete a Queue");
+                //ESP_LOGI(TAG_UDP, "Parquete a Queue");
                 ESP_LOGW(TAG_UDP,"Secuencia_UDP:%d",rx_buffer[12]);
-                if (!xQueueSend(Packet, rx_buffer, pdMS_TO_TICKS(15))){ESP_LOGE(TAG_UDP, "Error de envio Queue");}
+                if (!xQueueSend(Packet, rx_buffer, pdMS_TO_TICKS(20))){ESP_LOGE(TAG_UDP, "Error de envio Queue");}
             }
-            if(!xQueueReceive(PacketArtReply, art_reply, pdMS_TO_TICKS(100))){
+            if(!xQueueReceive(PacketArtReply, art_reply, pdMS_TO_TICKS(20))){
                 //ESP_LOGE(TAG_UDP, "Error: No se recibio ArtPollReply ");
             }else{
                 int err = sendto(sock, art_reply, sizeof(art_reply), 0, (struct sockaddr *)&source_addr, sizeof(source_addr));

@@ -49,13 +49,10 @@ void uart_task(void *pvParameters){
 
     while (1)
     {
-        if(!xQueueReceive(PacketUART,dmx_packet,pdMS_TO_TICKS(15))){
+        if(!xQueueReceive(PacketUART,dmx_packet,pdMS_TO_TICKS(20))){
             //ESP_LOGI(TAG_UART,"No se recibio paquete");
         }
         else{
-           // vTaskSuspend(artnet_task);
-          //  vTaskSuspend(udp_task);
-           // taskENTER_CRITICAL(&spinlock);
 
             ESP_LOGE(TAG_UART,"Envio de dato DMX");
             uart_set_rts(UART_NUM_2,0);
@@ -66,11 +63,9 @@ void uart_task(void *pvParameters){
             uart_set_line_inverse(UART_NUM_2,UART_SIGNAL_INV_DISABLE);
             ets_delay_us(MAB);
             
-            uart_write_bytes(UART_NUM_2, dmx_packet,sizeof(dmx_packet));
-
-           // taskEXIT_CRITICAL(&spinlock);
-            //vTaskResume(artnet_task);
-           // vTaskResume(udp_task);
+            uart_write_bytes(UART_NUM_2,(const uint8_t *)dmx_packet,sizeof(uint8_t [DMX_SIZE+1]));
+            
+            uart_wait_tx_done(UART_NUM_2,pdMS_TO_TICKS(20));
 
         }
     }

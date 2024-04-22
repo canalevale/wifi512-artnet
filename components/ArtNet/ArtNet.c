@@ -7,7 +7,7 @@ static const char *TAG_ART = "Art-Net";
 extern QueueHandle_t Packet;
 extern QueueHandle_t PacketArtReply;
 extern QueueHandle_t PacketUART;
-uint8_t data_send[DMX_SIZE+1];
+uint8_t *data_send;
 
 
 void artnet_task(void *pvParameters){
@@ -16,24 +16,27 @@ void artnet_task(void *pvParameters){
 
     while (1)
     {
-        if(!xQueueReceive(Packet, art_buffer, pdMS_TO_TICKS(15))){
+        if(!xQueueReceive(Packet, art_buffer, pdMS_TO_TICKS(20))){
             //ESP_LOGE(TAG_ART, "Error de recepcion Queue");
         }else{
-            ESP_LOGE(TAG_ART, "Recepcion Queue");
+            //ESP_LOGE(TAG_ART, "Recepcion Queue");
     
 
             switch ((art_buffer[8] | art_buffer[9] << 8)){
             case ART_DMX:
                 
-                ESP_LOGI(TAG_ART, "DMX Canal 1:%d", art_buffer[18]);
-                ESP_LOGW(TAG_ART,"Secuencia_ART:%d",art_buffer[12]);
-                data_send[0]=DMX_START_CODE; //Start Code
-
+                //ESP_LOGI(TAG_ART, "DMX Canal 1:%d", art_buffer[18]);
+                //ESP_LOGW(TAG_ART,"Secuencia_ART:%d",art_buffer[12]);
+                
+                art_buffer[17]=DMX_START_CODE; //Start Code
+                data_send=&art_buffer[17];
+                /*
+                data_send[0]=DMX_START_CODE;
                 for (int i = 0; i < DMX_SIZE; i++) {
                     data_send[i + 1] = art_buffer[18+i]; // Empezando desde el índice 1 ya que el índice 0 es el código de inicio
                 }
-
-                if (!xQueueSend(PacketUART, data_send, pdMS_TO_TICKS(15))){
+                */
+                if (!xQueueSend(PacketUART, data_send, pdMS_TO_TICKS(20))){
                     ESP_LOGE(TAG_ART, "Error de envio Queue");
                 }
                 
@@ -101,7 +104,7 @@ void artnet_task(void *pvParameters){
                     reply.swin[i] = swin[i];
                 }
 
-                if (!xQueueSend(PacketArtReply,(uint8_t *) &reply, pdMS_TO_TICKS(100))){
+                if (!xQueueSend(PacketArtReply,(uint8_t *) &reply, pdMS_TO_TICKS(15))){
                     ESP_LOGE(TAG_ART, "Error: No se pudo añadir ArtPollReply al Queue");
                 }
 
