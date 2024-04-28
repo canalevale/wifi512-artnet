@@ -110,6 +110,8 @@ void Wifi_STA_event_handler(void* arg, esp_event_base_t event_base,int32_t event
             ESP_LOGI(TAG_Wifi, "Reintentando conexion AP");
         } else {
             ESP_LOGI(TAG_Wifi, "Fallo la conexion con SSID:%s, Password:%s", STA_WIFI_SSID, STA_WIFI_PASS);
+            ESP_LOGI(TAG_Wifi, "Reboot");
+            esp_restart();
         }
         ESP_LOGI(TAG_Wifi,"Fallo la conexion con el AP");
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {

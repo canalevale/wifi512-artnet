@@ -30,9 +30,9 @@ void app_main(void)
   ESP_ERROR_CHECK(ret);
 
   //Creo la Queue
-  Packet = xQueueCreate(7, sizeof(uint8_t [MAX_BUFFER_ARTNET]));
+  Packet = xQueueCreate(8, sizeof(uint8_t [MAX_BUFFER_ARTNET]));
   PacketArtReply = xQueueCreate(2, sizeof(uint8_t [MAX_BUFFER_ARTNET]));
-  PacketUART=xQueueCreate(7, sizeof(uint8_t [DMX_SIZE+1]));
+  PacketUART=xQueueCreate(8, sizeof(uint8_t [DMX_SIZE+1]));
   //Inicializo Leds
   init_led();
   //Inicializo Wifi

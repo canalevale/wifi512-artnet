@@ -53,6 +53,7 @@
         "regex": "c",
         "type_traits": "c",
         "tuple": "c",
-        "variant": "c"
+        "variant": "c",
+        "wifi.h": "c"
     }
 }

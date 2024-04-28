@@ -36,8 +36,8 @@ void artnet_task(void *pvParameters){
                     data_send[i + 1] = art_buffer[18+i]; // Empezando desde el índice 1 ya que el índice 0 es el código de inicio
                 }
                 */
-                if (!xQueueSend(PacketUART, data_send, pdMS_TO_TICKS(20))){
-                    ESP_LOGE(TAG_ART, "Error de envio Queue");
+                if (!xQueueSend(PacketUART, data_send, pdMS_TO_TICKS(30))){
+                    ESP_LOGE(TAG_ART, "Error de envio Queue2");
                 }
                 
                 break;
