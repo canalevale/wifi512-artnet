@@ -12,6 +12,7 @@
 #define ART_NET_PORT 6454
 // Opcodes
 #define ART_POLL 0x2000
+#define ART_WIFISIGNAL 0x6001
 #define ART_POOLREPLY 0x2100
 #define ART_DMX 0x5000
 #define ART_SYNC 0x5200
@@ -20,6 +21,8 @@
 // Packet
 #define ART_NET_ID "Art-Net"
 #define ART_DMX_START 18
+//Tiempo en el que se envia los datos de Wifi
+#define TIMER_WIFISIGNAL pdMS_TO_TICKS(2000)
 
 // Estructura para el paquete ArtPoll
 typedef struct {
@@ -73,7 +76,7 @@ typedef struct {
 // Estructura para el paquete Art-DMX
 typedef struct {
     uint8_t id[8];      // "Art-Net" + 0x00
-    uint16_t opcode;    // Código de operación (OpPoll = 0x5000)
+    uint16_t opcode;    // Código de operación (OpDMX = 0x5000)
     uint8_t protVerH;   // Versión de protocolo alta (siempre 0)
     uint8_t protVerL;   // Versión de protocolo baja (siempre 14)
     uint8_t sequence;   // Numero de secuencia
@@ -87,7 +90,12 @@ typedef struct {
 } ArtNetDMX;
 
 
+
+
 //Funciones
 void artnet_task(void *pvParameters);
+void set_universo(void);
+uint8_t get_universo();
+
 
 #endif //___ARTNET_H__

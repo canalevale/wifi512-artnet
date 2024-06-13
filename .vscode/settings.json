@@ -9,10 +9,9 @@
     },
     "idf.espIdfPathWin": "e:\\Documents\\ESP32\\v5.2.1\\esp-idf",
     "idf.openOcdConfigs": [
-        "interface/ftdi/esp32_devkitj_v1.cfg",
-        "target/esp32.cfg"
+        "board/esp32-wrover-kit-3.3v.cfg"
     ],
-    "idf.portWin": "COM4",
+    "idf.portWin": "COM6",
     "idf.pythonBinPathWin": "e:\\Documents\\.espressif\\python_env\\idf5.2_py3.11_env\\Scripts\\python.exe",
     "idf.toolsPathWin": "e:\\Documents\\.espressif",
     "idf.flashType": "UART",
@@ -54,6 +53,15 @@
         "type_traits": "c",
         "tuple": "c",
         "variant": "c",
-        "wifi.h": "c"
+        "wifi.h": "c",
+        "led_board.h": "c",
+        "uart_send.h": "c",
+        "cstring": "c",
+        "typeinfo": "c",
+        "nvs_esp.h": "c",
+        "gptimer.h": "c",
+        "timer.h": "c",
+        "ets_sys.h": "c",
+        "task.h": "c"
     }
 }

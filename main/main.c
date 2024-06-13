@@ -1,20 +1,26 @@
 #include <stdio.h>
-#include "ArtNet.h"
+
 #include "nvs_flash.h"
-#include "WiFi.h"
-#include "led_board.h"
-#include "UDP.h"
-#include "UART_send.h"
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/timers.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
+///////Componentes///////
 #include "DMX.h"
+#include "WiFi.h"
+#include "led_board.h"
+#include "UDP.h"
+#include "UART_send.h"
+#include "ArtNet.h"
+#include "Web_Server.h"
+#include "NVS_ESP.h"
+
 ///////Defines y variables///////
 
 //Queue para las tareas
 QueueHandle_t Packet = 0;
-QueueHandle_t PacketArtReply = 0;
+QueueHandle_t Reply = 0;
 QueueHandle_t PacketUART=0;
 ///////Funicones///////
 esp_err_t create_task(void);
@@ -28,33 +34,59 @@ void app_main(void)
     ret = nvs_flash_init();
   }
   ESP_ERROR_CHECK(ret);
+  //escritura_nvs_ap(0,"NodoTest","SD4NodoTest");
+  //escritura_nvs_sta(0,"Fibertel WiFi CE2 2.4GHz","mUTe7gRw2Z");
+  //Obtengo todos los parametros antes de inicializar
+  get_nvs_all();
 
-  //Creo la Queue
-  Packet = xQueueCreate(8, sizeof(uint8_t [MAX_BUFFER_ARTNET]));
-  PacketArtReply = xQueueCreate(2, sizeof(uint8_t [MAX_BUFFER_ARTNET]));
-  PacketUART=xQueueCreate(8, sizeof(uint8_t [DMX_SIZE+1]));
   //Inicializo Leds
   init_led();
+
+  //Creo la Queue
+  Packet = xQueueCreate(10, sizeof(uint8_t [MAX_BUFFER_ARTNET]));
+  Reply = xQueueCreate(5, sizeof(uint8_t [MAX_BUFFER_ARTNET]));
+  PacketUART=xQueueCreate(10, sizeof(uint8_t [DMX_SIZE+1]));
+
   //Inicializo Wifi
-  wifi_init(MODE_STA);
+  wifi_init();
   //Inicializo UART
   UART_init();
+  //Seteo universo Art-Net
+  set_universo();
   //Creo una tarea UDP Art-Net
   create_task();
+  //Inicializo el WebServer
+  start_webserver();
+
   while (1)
   {
-    toggle_led();
-    vTaskDelay(200/portTICK_PERIOD_MS);
+    
+    set_led(LED_BOARD,1);
+    vTaskDelay(500/portTICK_PERIOD_MS);
+    set_led(LED_BOARD,0);
+    vTaskDelay(500/portTICK_PERIOD_MS);
+  
+    if(gpio_get_level(BOOT_PUSH) == 0){
+      set_led(LED_WIFI,1);
+      vTaskDelay(500 / portTICK_PERIOD_MS);
+      if(gpio_get_level(BOOT_PUSH) == 0){
+        ESP_LOGI("MAIN","Cambio de Modo");
+        change_mode_wifi();
+        ESP_LOGI("MAIN","Reset....");
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        esp_restart();
+      }
+
+    }
   }
   
 }
 
 esp_err_t create_task(void){
 
-  xTaskCreatePinnedToCore(udp_task, "Udp_socket", 4096, (void*)AF_INET, 2, NULL,tskNO_AFFINITY); //Tarea UDP
-  xTaskCreatePinnedToCore(artnet_task, "Art_net", 4096, NULL , 2, NULL,tskNO_AFFINITY); //Tarea Art-Net
-  xTaskCreatePinnedToCore(uart_task, "UART", 4096, NULL , 1, NULL,tskNO_AFFINITY); //Tarea UART
-
+  xTaskCreatePinnedToCore(udp_task, "Udp_socket", 4096, (void*)AF_INET, 8, NULL,1); //Tarea UDP
+  xTaskCreatePinnedToCore(artnet_task, "Art_net", 4096, NULL , 9, NULL,1); //Tarea Art-Net
+  xTaskCreatePinnedToCore(uart_task, "UART", 4096, NULL , 1, NULL, 0); //Tarea UART tskNO_AFFINITY
 
   return ESP_OK;
 }

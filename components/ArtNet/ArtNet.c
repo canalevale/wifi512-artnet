@@ -5,39 +5,42 @@
 static const char *TAG_ART = "Art-Net";
 
 extern QueueHandle_t Packet;
-extern QueueHandle_t PacketArtReply;
+extern QueueHandle_t Reply;
 extern QueueHandle_t PacketUART;
 uint8_t *data_send;
+uint8_t universo=0;
 
 
 void artnet_task(void *pvParameters){
 
     uint8_t art_buffer[MAX_BUFFER_ARTNET];
-
-    while (1)
+    while (!ifconecct())
     {
+        //ESP_LOGW(TAG_ART, "2");
         if(!xQueueReceive(Packet, art_buffer, pdMS_TO_TICKS(20))){
             //ESP_LOGE(TAG_ART, "Error de recepcion Queue");
         }else{
-            //ESP_LOGE(TAG_ART, "Recepcion Queue");
-    
 
             switch ((art_buffer[8] | art_buffer[9] << 8)){
             case ART_DMX:
-                
-                //ESP_LOGI(TAG_ART, "DMX Canal 1:%d", art_buffer[18]);
-                //ESP_LOGW(TAG_ART,"Secuencia_ART:%d",art_buffer[12]);
-                
+
+                if(universo==art_buffer[14]){ //Compruevo si el paquete corresponde a este universo
+
                 art_buffer[17]=DMX_START_CODE; //Start Code
                 data_send=&art_buffer[17];
-                /*
-                data_send[0]=DMX_START_CODE;
-                for (int i = 0; i < DMX_SIZE; i++) {
-                    data_send[i + 1] = art_buffer[18+i]; // Empezando desde el índice 1 ya que el índice 0 es el código de inicio
+
+                if (uxQueueSpacesAvailable(PacketUART) == 0)
+                {
+                    uint8_t discardedItem2;
+                    xQueueReceive(PacketUART, &discardedItem2, 0); // Eliminar el elemento más antiguo
+                    //ESP_LOGE(TAG_ART, "borro dato");
                 }
-                */
-                if (!xQueueSend(PacketUART, data_send, pdMS_TO_TICKS(30))){
+                
+                if (!xQueueSend(PacketUART, data_send, pdMS_TO_TICKS(15))){
                     ESP_LOGE(TAG_ART, "Error de envio Queue2");
+                }
+                //ESP_LOGW(TAG_ART,"Envio paquete a UART");
+                
                 }
                 
                 break;
@@ -75,8 +78,8 @@ void artnet_task(void *pvParameters){
                  memcpy(reply.nodereport, "#0001 [0000] Nodo Wifi-ArtNet.[Bridge with ESP32] -> Estado OK.", sizeof(reply.nodereport));
                  reply.etsaman[0] = 0;
                  reply.etsaman[1] = 0;
-                 reply.verH       = 1;
-                 reply.ver        = 0;
+                 reply.verH       = 0;
+                 reply.ver        = 14;
                  reply.subH       = 0;
                  reply.sub        = 0;
                  reply.oemH       = 0;
@@ -103,8 +106,9 @@ void artnet_task(void *pvParameters){
                     reply.swout[i] = swout[i];
                     reply.swin[i] = swin[i];
                 }
+                
 
-                if (!xQueueSend(PacketArtReply,(uint8_t *) &reply, pdMS_TO_TICKS(15))){
+                if (!xQueueSend(Reply,(uint8_t *) &reply, pdMS_TO_TICKS(15))){
                     ESP_LOGE(TAG_ART, "Error: No se pudo añadir ArtPollReply al Queue");
                 }
 
@@ -112,9 +116,24 @@ void artnet_task(void *pvParameters){
             case ART_POOLREPLY:
                  ESP_LOGI(TAG_ART, "Paquete Art_PollReply");
                  break;
+
+            
             }
         }
+       
     }
 
     
 }
+
+void set_universo(void){
+    char mod[4];
+    get_nvs_mode(mod);
+    if(strcmp(mod,"STA")==0){
+        universo=get_nvs_sta_subuni();
+    }else if (strcmp(mod,"AP")==0){
+        universo=get_nvs_ap_subuni();
+    }
+}
+
+uint8_t get_universo(){return universo;}
